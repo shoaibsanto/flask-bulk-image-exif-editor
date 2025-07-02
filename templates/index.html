@@ -1,73 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Bulk Image Optimizer</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            padding-top: 50px;
-        }
-        .container {
-            max-width: 700px;
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            margin-bottom: 30px;
-            font-weight: bold;
-            text-align: center;
-        }
-        .form-label {
-            font-weight: 500;
-        }
-        .btn-primary {
-            width: 100%;
-            padding: 12px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Image GeoTagging Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- SEO Meta Tags -->
+  <title>Image GeoTagging Tool - Add Accurate GPS Location to Your Images</title>
+  <meta name="description" content="Use our free Image GeoTagging Tool to add precise GPS location (latitude and longitude) data to your images. Perfect for photographers, bloggers, and SEO experts.">
+  <meta name="keywords" content="GeoTagging Tool, Image GPS Tagging, EXIF Metadata, Add Location to Images, GeoTag Images, Free Image GeoTagger, Image Location Editor">
+  
+  <!-- Robots Directives -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+  <!-- Canonical Tag -->
+  <link rel="canonical" href="https://bulkimageoptimizer.com/">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZOWYnmUW5mW0Stm9faFdgW7WCXH_VaFc&libraries=places"></script>
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+      border-radius: 8px;
+    }
+    .form-section {
+      background: #f8f9fa;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .map-section {
+      margin-top: 20px;
+    }
+    body {
+      background-color: #f4f6f9;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Bulk Image Optimizer</h1>
-        <form method="POST" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="images" class="form-label">Upload Images</label>
-                <input class="form-control" type="file" name="images" multiple accept="image/*" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Title</label>
-                <input class="form-control" type="text" name="title" value="Default Title">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Subject</label>
-                <input class="form-control" type="text" name="subject" value="Default Subject">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Tags (comma separated)</label>
-                <input class="form-control" type="text" name="tags" value="tag1, tag2">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Comments</label>
-                <textarea class="form-control" name="comments" rows="3">Default comment</textarea>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">GPS Latitude</label>
-                <input class="form-control" type="number" step="any" name="gps_latitude" value="23.6850">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">GPS Longitude</label>
-                <input class="form-control" type="number" step="any" name="gps_longitude" value="90.3563">
-            </div>
-            <div class="d-grid">
-                <button class="btn btn-primary" type="submit">⬇ Process & Download ZIP</button>
-            </div>
-        </form>
-    </div>
+  <div class="container my-5">
+    <h2 class="mb-4 text-center">📍 Image GeoTagging Tool</h2>
+    <form method="POST" enctype="multipart/form-data" class="form-section">
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      <div class="mb-3">
+        <label class="form-label">Images</label>
+        <input type="file" class="form-control" name="images" multiple required>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-control" name="title" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Subject</label>
+          <input type="text" class="form-control" name="subject" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Tags</label>
+          <input type="text" class="form-control" name="tags">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Comments</label>
+          <input type="text" class="form-control" name="comments">
+        </div>
+      </div>
+
+      <!-- Map Section -->
+      <div class="map-section">
+        <label class="form-label">Search Location</label>
+        <input id="place-input" class="form-control mb-3" type="text" placeholder="Search a location...">
+        <div id="map"></div>
+      </div>
+
+      <!-- Hidden lat/lng inputs auto-filled from JS -->
+      <input type="hidden" name="gps_latitude" id="gps_latitude" required>
+      <input type="hidden" name="gps_longitude" id="gps_longitude" required>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary btn-lg">⬇ Upload & Add GeoTag</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let map, marker;
+
+    function initMap() {
+      const defaultLocation = { lat: 23.8103, lng: 90.4125 };
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: defaultLocation,
+        zoom: 8,
+      });
+
+      const input = document.getElementById("place-input");
+      const searchBox = new google.maps.places.SearchBox(input);
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+      searchBox.addListener("places_changed", () => {
+        const places = searchBox.getPlaces();
+        if (!places.length) return;
+
+        const place = places[0];
+        if (!place.geometry) return;
+
+        if (marker) marker.setMap(null);
+
+        marker = new google.maps.Marker({
+          map,
+          position: place.geometry.location,
+        });
+
+        document.getElementById("gps_latitude").value = place.geometry.location.lat().toFixed(10);
+        document.getElementById("gps_longitude").value = place.geometry.location.lng().toFixed(10);
+
+        map.setCenter(place.geometry.location);
+        map.setZoom(12);
+      });
+    }
+
+    window.onload = initMap;
+  </script>
 </body>
 </html>
